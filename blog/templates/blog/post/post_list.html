@@ -7,25 +7,27 @@
     
 {% block content %}
     <h1>My Blog</h1>
+    
     {% for post in posts %}
-        <h2>
-            
-            {% comment %}
-                <a href="{% url 'blog:post_details' post.id %}">
-                    {{ post.title }}
-                </a>
-            {% endcomment %}
-                
-        
+    <h2>
         <a href="{{ post.get_absolute_url }}">
             {{ post.title }}
         </a>
-        </h2>
-        <p class="date">
-            Published {{ post.publish }} <b>by</b>  {{ post.author }}
-        </p>
-            {{ post.body|truncatewords:2|linebreaks }}
-        <hr />
+    </h2>
+    <p class="date">
+        Published {{ post.publish }} <b>by</b>  {{ post.author }}
+    </p>
+    {{ post.body|truncatewords:2|linebreaks }}
+    <hr />
     {% endfor %}
+
+    {% if posts.has_other_pages %}
+        
+        {% for i in posts.paginator.page_range %}
+            <a href="?page={{i}}">__{{i}}__ </a>
+        {% endfor %}
+            
+    
+    {% endif %}
 {% endblock content %}
     
