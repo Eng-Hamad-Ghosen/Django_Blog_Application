@@ -1,9 +1,10 @@
 import random
 from django.shortcuts import render, get_object_or_404
-from django.http import Http404
+from django.http import Http404, HttpRequest
 from django.http import HttpResponse
 from .models import Post
 from django.core.paginator import Paginator, EmptyPage
+from django.views.generic import ListView
 # Create your views here.
 
 def post_list(request):
@@ -15,6 +16,12 @@ def post_list(request):
     except EmptyPage:
         posts = paginator.get_page(paginator.page_number)
     return render(request,'blog/post/post_list.html', {'posts':posts})
+
+class Post_List(ListView):
+    model = Post
+    context_object_name = 'posts'
+    paginate_by = 3
+    template_name = 'blog/post/post_list.html'
 
 def post_details(request, year, month, day, slug):
 #method 1

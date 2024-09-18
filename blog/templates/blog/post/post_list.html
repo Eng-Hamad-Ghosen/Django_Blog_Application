@@ -27,6 +27,10 @@
             <a href="?page={{i}}">__{{i}}__ </a>
         {% endfor %}
             
+            {% with  page=page_obj  %}
+                
+            {% endwith %}
+                
     
     {% endif %}
 {% endblock content %}
