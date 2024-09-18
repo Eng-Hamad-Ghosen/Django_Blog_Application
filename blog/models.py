@@ -11,12 +11,12 @@ class Post(models.Model):
     
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='auther_post')
     title = models.CharField(max_length=250)
+    slug = models.SlugField(max_length=250, unique_for_date='publish',blank=True, null=True)
     body = models.TextField()
     publish = models.DateTimeField(default=timezone.now)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.DRAFT)
-    slug = models.SlugField(max_length=250 ,blank=True, null=True)
     
     def __str__(self):
         return self.title
@@ -26,4 +26,11 @@ class Post(models.Model):
         indexes = [models.Index(fields=['title','publish'])]
     def get_absolute_url(self):
         # from django.core.urlresolvers import reverse
-        return reverse('blog:post_details', kwargs={'id': self.id})
+        return reverse('blog:post_details', kwargs={'slug': self.slug,
+                                                    'year':self.publish.year,
+                                                    'month':self.publish.month,
+                                                    'day':self.publish.day})
+        # return reverse('blog:post_details', args=[self.slug,
+        #                                             self.publish.year,
+        #                                             self.publish.month,
+        #                                             self.publish.day])
