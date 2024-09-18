@@ -5,6 +5,8 @@ from django.http import HttpResponse
 from .models import Post
 from django.core.paginator import Paginator, EmptyPage
 from django.views.generic import ListView
+from. forms import EmailPostForm
+from django.core.mail import send_mail
 # Create your views here.
 
 def post_list(request):
@@ -38,3 +40,21 @@ def post_details(request, year, month, day, slug):
                              publish__month=month,
                              publish__day=day)
     return render(request, 'blog/post/post_details.html', {'post':post})
+
+def post_share(request, id):
+    post = get_object_or_404(Post, id=id)
+    sent =False
+    post_url = request.build_absolute_uri(post.get_absolute_url())
+    if request.method=='POST':
+        form = EmailPostForm(request.POST)
+        if form.is_valid():
+            subject = f"{form.cleaned_data['name']}  recommend your read {post.title}"
+            message = f"Read {post.title} at {post_url} \n {form.cleaned_data['name'] }\'s comments: {form.cleaned_data['comments']}"
+            try:
+                send_mail(subject, message, 'from_your_account@gmail.com', [form.cleaned_data['to']],fail_silently=False)
+            except:
+                
+                sent = True
+    else:
+        form = EmailPostForm()
+    return render(request, 'blog/post/share.html', {'form':form, 'post':post, 'sent':sent, 'post_url':post_url})

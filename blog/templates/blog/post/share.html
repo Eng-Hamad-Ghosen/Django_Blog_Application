@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Share a post{% endblock title %}
+
+
+{% block content %}
+    
+    {% if sent %}
+        <h1>E-mail Successfully sent</h1>
+        <p style="color: rgb(145, 161, 145);">
+            "{{ post.title }}" was successfully sent tot {{ form.cleaned_data.to }}
+        </p>
+
+        <p>
+            <a href="{{post_url}}">Link</a><br>
+            {{post_url}} <br>
+            <a href="{{post_url}}">{{post_url}}</a>
+        </p>
+    {% else %}
+        <h1>Share "{{ post.title }}" by e-mail</h1>
+        <form method="POST" class="form">
+            {% csrf_token %}
+            {{form}}
+            <input type="submit" value="Send E-mail">
+        </form>
+    {% endif %}
+        
+{% endblock content %}
+    
+    
