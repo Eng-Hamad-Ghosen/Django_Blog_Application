@@ -12,5 +12,15 @@
     {{ post.body|linebreaks }}
 
     <a href="{% url 'blog:post_share' post.id %}">Share this post</a>
+    <br><br>
+    <h1 style="color: red;"> {{comment_count}} Comments</h1>
+    <a style="color: rgb(195, 248, 4);" href="{% url 'blog:post_comment' post.id %}">Add new comment</a>
+    
+    {% comment %}
+        
+    <!-- {% include 'blog/post/comment.html' %} -->
+    {% endcomment %}
+        
+
 {% endblock content %}
     

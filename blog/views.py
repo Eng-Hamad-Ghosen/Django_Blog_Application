@@ -2,11 +2,12 @@ import random
 from django.shortcuts import render, get_object_or_404
 from django.http import Http404, HttpRequest
 from django.http import HttpResponse
-from .models import Post
+from .models import Post, Comment
 from django.core.paginator import Paginator, EmptyPage
 from django.views.generic import ListView
-from. forms import EmailPostForm
+from. forms import EmailPostForm, CommentForm
 from django.core.mail import send_mail
+from django.views.decorators.http import require_POST
 # Create your views here.
 
 def post_list(request):
@@ -39,7 +40,8 @@ def post_details(request, year, month, day, slug):
                              publish__year=year,
                              publish__month=month,
                              publish__day=day)
-    return render(request, 'blog/post/post_details.html', {'post':post})
+    comment_count = Comment.objects.filter(post=post).count()
+    return render(request, 'blog/post/post_details.html', {'post':post, 'comment_count':comment_count})
 
 def post_share(request, id):
     post = get_object_or_404(Post, id=id)
@@ -58,3 +60,27 @@ def post_share(request, id):
     else:
         form = EmailPostForm()
     return render(request, 'blog/post/share.html', {'form':form, 'post':post, 'sent':sent, 'post_url':post_url})
+
+# @require_POST
+def post_comment(request, id):
+    post = get_object_or_404(Post, id=id)
+    comments = Comment.objects.filter(post=post)
+    comment = None
+    if request.method=='POST':
+        form = CommentForm(data=request.POST)
+        if form.is_valid():
+            obj_comment = form.save(commit=False)
+            obj_comment.post = post
+            obj_comment.save()
+            comment = 'Done'
+            return render(request, 'blog/post/comment.html', {'post':post,
+                                                        'form':form,
+                                                        'comment':comment,
+                                                        'comments':comments})
+    form = CommentForm()
+    return render(request, 'blog/post/comment.html', {'post':post,
+                                                    'form':form,
+                                                    'comment':comment,
+                                                    'comments':comments})
+
+

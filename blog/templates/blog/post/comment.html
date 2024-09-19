@@ -1,0 +1,21 @@
+<form action="{% url 'blog:post_comment' post.id %}" method="post">
+{% csrf_token %}
+    {{form.as_p}}
+    <!-- paragraphلحتى يظهر الحقول تحا بعض ك as_p  -->
+    <input type="submit" value="Add Comment">
+</form><br>
+<h1 style="color: rgb(133, 133, 243);">
+    <a href="{{post.get_absolute_url}}">Back</a>
+</h1>
+
+{% if comment %}
+<h2 style="color: red;">
+    Your comment has been added.</h2>
+{% endif %}
+    
+
+{% for c in comments %}
+ <h1 style="color: rgb(25, 38, 34);">[{{forloop.counter}}]  {{c.name}} </h1>  __  {{c.body|linebreaks }}
+ <hr>
+{% endfor %}
+    
