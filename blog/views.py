@@ -8,17 +8,22 @@ from django.views.generic import ListView
 from. forms import EmailPostForm, CommentForm
 from django.core.mail import send_mail
 from django.views.decorators.http import require_POST
+from taggit.models import Tag
 # Create your views here.
 
-def post_list(request):
+def post_list(request, tag_slug=None):
     posts = Post.objects.all()
+    tag = None
+    if tag_slug:
+        tag = get_object_or_404(Tag, slug=tag_slug)
+        posts = posts.filter(tags__in=[tag])
     paginator = Paginator(posts,3)
     page_number = request.GET.get('page')
     try:
         posts = paginator.get_page(page_number)
     except EmptyPage:
         posts = paginator.get_page(paginator.page_number)
-    return render(request,'blog/post/post_list.html', {'posts':posts})
+    return render(request,'blog/post/post_list.html', {'posts':posts, 'tag':tag})
 
 class Post_List(ListView):
     model = Post

@@ -3,6 +3,9 @@ from django.utils import timezone
 from datetime import datetime
 from django.contrib.auth.models import User
 from django.urls import reverse
+from taggit.managers import TaggableManager
+
+
 # Create your models here.
 class Post(models.Model):
     class Status(models.TextChoices):
@@ -17,6 +20,8 @@ class Post(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.DRAFT)
+    
+    tags = TaggableManager()
     
     def __str__(self):
         return self.title
