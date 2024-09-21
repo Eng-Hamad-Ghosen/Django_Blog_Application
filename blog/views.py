@@ -9,6 +9,8 @@ from. forms import EmailPostForm, CommentForm
 from django.core.mail import send_mail
 from django.views.decorators.http import require_POST
 from taggit.models import Tag
+from django.db.models import Count
+
 # Create your views here.
 
 def post_list(request, tag_slug=None):
@@ -46,7 +48,13 @@ def post_details(request, year, month, day, slug):
                              publish__month=month,
                              publish__day=day)
     comment_count = Comment.objects.filter(post=post).count()
-    return render(request, 'blog/post/post_details.html', {'post':post, 'comment_count':comment_count})
+    
+    post_tags_ids = post.tags.values_list('id', flat=True)
+    similar_posts = Post.objects.filter(tags__in=post_tags_ids).exclude(id=post.id)
+    similar_posts = similar_posts.annotate(same_tags=Count('tags')).order_by('-same_tags','-publish')
+    print(post_tags_ids)
+    print(similar_posts)
+    return render(request, 'blog/post/post_details.html', {'post':post, 'comment_count':comment_count, 'similar_posts':similar_posts})
 
 def post_share(request, id):
     post = get_object_or_404(Post, id=id)

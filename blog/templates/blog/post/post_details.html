@@ -16,6 +16,19 @@
     <h1 style="color: red;"> {{comment_count}} Comments</h1>
     <a style="color: rgb(195, 248, 4);" href="{% url 'blog:post_comment' post.id %}">Add new comment</a>
     
+    <h2 style="color: red;">Similar posts</h2>
+    <ul>
+        
+        {% for post in similar_posts %}
+        <p>
+            <li><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></li>
+        </p>
+        {% empty %}
+        There are no similar posts yet.
+        {% endfor %}
+    </ul>
+        
+
     {% comment %}
         
     <!-- {% include 'blog/post/comment.html' %} -->
