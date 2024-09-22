@@ -1,0 +1,10 @@
+
+<ul>More_Comments
+    {% for post in more_comments %}
+
+        <li>
+            <a style="color: red;" href="{{ post.get_absolute_url }}">{{ post.title }}</a>
+        </li>
+
+    {% endfor %}
+</ul>

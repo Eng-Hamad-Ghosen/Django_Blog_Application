@@ -1,12 +1,17 @@
 {% extends 'base.html' %}
-
+{% load blog_custom_tags %}
 
 {% block title %}
-    Home Page
+Home Page
 {% endblock title %}
-    
+
 {% block content %}
-    <h1>My Blog</h1>
+    <h1>My Blog = {% total_posts %}</h1>
+    {% show_latest_posts 2 %}
+        
+    
+    
+        
     
     {% if tag %}
         <h2>Posts tagged with "{{tag.name}}"</h2>
