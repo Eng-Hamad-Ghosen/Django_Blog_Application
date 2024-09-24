@@ -6,7 +6,10 @@ Home Page
 {% endblock title %}
 
 {% block content %}
-    <h1>My Blog = {% total_posts %}</h1>
+    <h1>My Blog = {% total_posts %}
+    <a href="{% url 'blog:post_search' %}">
+        Search
+    </a></h1>
     {% show_latest_posts 2 %}
         
     

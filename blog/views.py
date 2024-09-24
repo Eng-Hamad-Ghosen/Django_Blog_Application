@@ -5,11 +5,11 @@ from django.http import HttpResponse
 from .models import Post, Comment
 from django.core.paginator import Paginator, EmptyPage
 from django.views.generic import ListView
-from. forms import EmailPostForm, CommentForm
-from django.core.mail import send_mail
+from. forms import EmailPostForm, CommentForm, SearchForm
 from django.views.decorators.http import require_POST
 from taggit.models import Tag
 from django.db.models import Count
+from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 
 # Create your views here.
 
@@ -99,3 +99,16 @@ def post_comment(request, id):
                                                     'comments':comments})
 
 
+def post_search(request):
+    form = SearchForm()
+    query = None
+    result = []
+    if 'query' in request.GET:
+        form = SearchForm(request.GET)
+        if form.is_valid():
+            query = form.cleaned_data['query']
+            search_vector = SearchVector('title','body')
+            search_query = SearchQuery(query, config='english')
+            search_rank = SearchRank(search_vector, search_query)
+            result = Post.objects.annotate(search=search_vector, rank=search_rank).filter(search=query).order_by('-rank')
+    return render(request, 'blog/post/search.html', {'form':form, 'posts':result})

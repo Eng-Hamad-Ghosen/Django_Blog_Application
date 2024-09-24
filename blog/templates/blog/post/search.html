@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+
+{% block title %}
+    Search
+{% endblock title %}
+    
+
+{% block content %}
+    <br/><br/><br/><br/>
+    {% if not posts %}
+        
+    
+    <form>
+        <h3>{{form.as_p}}</h3>
+        <!-- paragraphلحتى يظهر الحقول تحا بعض ك as_p  -->
+        <input type="submit" value="Search">
+    </form><br>
+    
+    {% endif %}
+    {% if posts %}
+
+    {% for post in posts %}
+    <a href="{{post.get_absolute_url}}">{{post.title}}</a><br/>
+    
+    {% endfor %}
+    <a href="{% url 'blog:post_search' %}">Search Again</a><br/>
+
+    {% endif %}
+
+
+{% endblock content %}
